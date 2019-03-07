@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs
+/ExampleNetCore/bin/Debug/netcoreapp2.2
+/ExampleNetCore/obj
