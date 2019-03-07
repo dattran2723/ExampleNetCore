@@ -50,6 +50,11 @@
 
     <p id="counter"></p>
 
+    <form class="search" action="javascript:;" method="get">
+        <input type="text" name="search-name" value="" />
+        <input type="submit" value="Search" />
+    </form>
+    <br />
     <table>
         <tr>
             <th>Is Complete</th>
@@ -59,10 +64,86 @@
         </tr>
         <tbody id="todos"></tbody>
     </table>
-
+    <br />
+    <div class="pagination">
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="site.js"></script>
+    <script>
+        const link = "/api/todo";
+        $(document).ready(function () {
+            getNumberItem();
+        });
+        function getNumberItem() {
+            $.ajax({
+                type: "GET",
+                url: link + "/numberItem",
+                cache: false,
+                success: function (data) {
+                    console.log(data)
+                    getCount(data);
+                    var page = Math.ceil(data / 2);
+                    var btn = "";
+                    for (var i = 0; i < page; i++) {
+                        btn = btn + "<input type='submit' class='loadPage' value='" + (i + 1) + "'/>";
+                    }
+                    $('.pagination').append(btn);
+                }
+            });
+        }
+
+        $('.search').on('submit', function () {
+            var name = $(this).find('input[name="search-name"]').val();
+            if (name == '') {
+                $(this).find('input[name="search-name"]').focus();
+                return false;
+            }
+            $.ajax({
+                type: "GET",
+                url: uri + "/search/" + name,
+                cache: false,
+                success: function (data) {
+                    const tBody = $("#todos");
+
+                    $(tBody).empty();                    
+
+                    $.each(data, function (key, item) {
+                        const tr = $("<tr></tr>")
+                            .append(
+                                $("<td></td>").append(
+                                    $("<input/>", {
+                                        type: "checkbox",
+                                        disabled: true,
+                                        checked: item.isComplete
+                                    })
+                                )
+                            )
+                            .append($("<td></td>").text(item.name))
+                            .append(
+                                $("<td></td>").append(
+                                    $("<button>Edit</button>").on("click", function () {
+                                        editItem(item.id);
+                                    })
+                                )
+                            )
+                            .append(
+                                $("<td></td>").append(
+                                    $("<button>Delete</button>").on("click", function () {
+                                        deleteItem(item.id);
+                                    })
+                                )
+                            );
+
+                        tr.appendTo(tBody);
+                    });
+
+                    todos = data;
+                }
+            });
+        })
+
+    </script>
 </body>
 </html>

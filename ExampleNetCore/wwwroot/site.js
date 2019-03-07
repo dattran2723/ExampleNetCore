@@ -14,20 +14,21 @@ function getCount(data) {
 }
 
 $(document).ready(function () {
-    getData();
+    getData(1);
 });
 
-function getData() {
+$('.pagination').on('click', '.loadPage', function () {
+    getData($(this).val());
+})
+function getData(page) {
     $.ajax({
         type: "GET",
-        url: uri,
+        url: uri + "/page/"+page,
         cache: false,
         success: function (data) {
             const tBody = $("#todos");
 
             $(tBody).empty();
-
-            getCount(data.length);
 
             $.each(data, function (key, item) {
                 const tr = $("<tr></tr>")
@@ -81,6 +82,7 @@ function addItem() {
         },
         success: function (result) {
             getData();
+            getNumberItem();
             $("#add-name").val("");
         }
     });
@@ -92,6 +94,7 @@ function deleteItem(id) {
         type: "DELETE",
         success: function (result) {
             getData();
+            getNumberItem();
         }
     });
 }
