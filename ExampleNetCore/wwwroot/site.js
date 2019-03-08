@@ -17,20 +17,30 @@ $(document).ready(function () {
     getData(1);
 });
 
-$('.pagination').on('click', '.loadPage', function () {
+$('.pagination').on('click', '.loadPage', function () {    
     getData($(this).val());
 })
+
 function getData(page) {
     $.ajax({
         type: "GET",
-        url: uri + "/page/"+page,
+        url: uri + "/page?page=" + page,
         cache: false,
         success: function (data) {
-            const tBody = $("#todos");
+            var pageCount = data.pageCount;
+            var btn = "";
+            for (var i = 0; i < pageCount; i++) {
+                btn = btn + "<input type='submit' class='loadPage' value='" + (i + 1) + "'/>";
+            }
+            $('.pagination').html(btn);
 
+
+            const tBody = $("#todos");
             $(tBody).empty();
 
-            $.each(data, function (key, item) {
+            getCount(data.rowCount)
+
+            $.each(data.results, function (key, item) {
                 const tr = $("<tr></tr>")
                     .append(
                         $("<td></td>").append(
@@ -59,8 +69,6 @@ function getData(page) {
 
                 tr.appendTo(tBody);
             });
-
-            todos = data;
         }
     });
 }

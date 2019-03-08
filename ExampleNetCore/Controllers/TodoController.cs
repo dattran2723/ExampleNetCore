@@ -50,34 +50,34 @@ namespace ExampleNetCore.Controllers
 
         [HttpGet("page")]
         public async Task<ActionResult<PagedResult<TodoItem>>> GetTodo(int? page = 1)
+        {            
+            var skip = (int)(page - 1) * 2;
+            var results = await _context.TodoItems.Skip(skip).Take(2).ToListAsync();
+            var rowCount = _context.TodoItems.Count();
+            return SetPageResult(results, (int)page, rowCount);
+        }
+
+        public PagedResult<TodoItem> SetPageResult(List<TodoItem> results, int page, int rowCount)
         {
             var result = new PagedResult<TodoItem>();
             result.CurrentPage = (int)page;
             result.PageSize = 2;
-            result.RowCount = await _context.TodoItems.CountAsync();
+            result.RowCount = rowCount;
 
             var pageCount = (double)result.RowCount / 2;
             result.PageCount = (int)Math.Ceiling(pageCount);
 
-            var skip = (int)(page - 1) * 2;
-            result.Results = await _context.TodoItems.Skip(skip).Take(2).ToListAsync();
+            result.Results = results;
             return result;
         }
 
         [HttpGet("search")]
         public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItem(string name, int? page = 1)
         {
-            var result = new PagedResult<TodoItem>();
-            result.CurrentPage = (int)page;
-            result.PageSize = 2;
-            result.RowCount = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).CountAsync();
-
-            var pageCount = (double)result.RowCount / 2;
-            result.PageCount = (int)Math.Ceiling(pageCount);
-
             var skip = (int)(page - 1) * 2;
-            result.Results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
-            return result;
+            var results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
+            var rowCount = results.Count();
+            return SetPageResult(results, (int)page, rowCount);
         }
 
         [HttpGet("/api/todo/numberItem")]

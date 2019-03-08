@@ -73,26 +73,6 @@
     <script src="site.js"></script>
     <script>
         const link = "/api/todo";
-        $(document).ready(function () {
-            getNumberItem();
-        });
-        function getNumberItem() {
-            $.ajax({
-                type: "GET",
-                url: link + "/numberItem",
-                cache: false,
-                success: function (data) {
-                    console.log(data)
-                    getCount(data);
-                    var page = Math.ceil(data / 2);
-                    var btn = "";
-                    for (var i = 0; i < page; i++) {
-                        btn = btn + "<input type='submit' class='loadPage' value='" + (i + 1) + "'/>";
-                    }
-                    $('.pagination').append(btn);
-                }
-            });
-        }
 
         $('.search').on('submit', function () {
             var name = $(this).find('input[name="search-name"]').val();
@@ -100,16 +80,27 @@
                 $(this).find('input[name="search-name"]').focus();
                 return false;
             }
+            search(name,1)
+        })
+
+        function search(name, page) {
             $.ajax({
                 type: "GET",
-                url: uri + "/search/" + name,
+                url: uri + "/search?name=" + name + "&page=" + page,
                 cache: false,
                 success: function (data) {
+                    var pageCount = data.pageCount;
+                    var btn = "";
+                    for (var i = 0; i < pageCount; i++) {
+                        btn = btn + "<input type='submit' class='loadPageSearch' value='" + (i + 1) + "'/>";
+                    }
+                    $('.pagination').html(btn);
+
+
                     const tBody = $("#todos");
+                    $(tBody).empty();
 
-                    $(tBody).empty();                    
-
-                    $.each(data, function (key, item) {
+                    $.each(data.results, function (key, item) {
                         const tr = $("<tr></tr>")
                             .append(
                                 $("<td></td>").append(
@@ -138,11 +129,9 @@
 
                         tr.appendTo(tBody);
                     });
-
-                    todos = data;
                 }
             });
-        })
+        }
 
     </script>
 </body>
