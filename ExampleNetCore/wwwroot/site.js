@@ -1,6 +1,8 @@
 ﻿const uri = "api/todo";
 let todos = null;
 var currentPage = 1;
+var pageCount = 1;
+var searchName = '';
 function getCount(data) {
     const el = $("#counter");
     let name = "to-do";
@@ -18,24 +20,22 @@ $(document).ready(function () {
     getData(currentPage);
 });
 
-$('.pagination').on('click', '.loadPage', function () {
-    currentPage = $(this).val();
-    getData(currentPage);
-})
 
-function getData(page) {
+
+function getData(page, name) {
+    searchName = name === undefined ? '' : name;
     $.ajax({
         type: "GET",
-        url: uri + "/getAll?page=" + page,
+        url: uri + "/get?name=" + searchName + "&page=" + page,
         cache: false,
         success: function (data) {
-            var pageCount = data.pageCount;
-            var btn = "";
+            pageCount = data.pageCount;
+            var btn = "<input type='submit' id='previous' value='previous'>";
             for (var i = 0; i < pageCount; i++) {
-                btn = btn + "<input type='submit' class='loadPage' value='" + (i + 1) + "'/>";
+                btn += "<input type='submit' class='loadPage' value='" + (i + 1) + "'/>";
             }
+            btn += "<input type='submit' id='next' value='next'>";
             $('.pagination').html(btn);
-
 
             const tBody = $("#todos");
             $(tBody).empty();
@@ -144,3 +144,23 @@ $(".my-form").on("submit", function () {
 function closeInput() {
     $("#spoiler").css({ display: "none" });
 }
+
+
+$('.pagination').on('click', '.loadPage', function () {
+    currentPage = $(this).val();
+    getData(currentPage, searchName);
+})
+
+$('.pagination').on('click', '#previous', function () {
+    if (currentPage > 1) {
+        currentPage -= 1;
+        getData(currentPage, searchName);
+    }
+})
+
+$('.pagination').on('click', '#next', function () {
+    if (currentPage < pageCount) {
+        currentPage += 1;
+        getData(currentPage, searchName);
+    }
+})

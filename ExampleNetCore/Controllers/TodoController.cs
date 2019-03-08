@@ -26,20 +26,12 @@ namespace ExampleNetCore.Controllers
             }
         }
         
-        [HttpGet("getAll")]
-        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItems(int? page = 1)
-        {            
-            var skip = (int)(page - 1) * 2;
-            var results = await _context.TodoItems.Skip(skip).Take(2).ToListAsync();
-            var rowCount = _context.TodoItems.Count();
-            return SetPageResult(results, (int)page, rowCount);
-        }
-
-        [HttpGet("search")]
-        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItem(string name, int? page = 1)
+        [HttpGet("get")]
+        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItems(string name, int? page = 1)
         {
+            name = name != null ? name : "";
             var skip = (int)(page - 1) * 2;
-            var results = await _context.TodoItems.Where(x => x.Name.Contains(name)).Skip(skip).Take(2).ToListAsync();
+            var results = await _context.TodoItems.Where(x=>x.Name.Contains(name)).Skip(skip).Take(2).ToListAsync();
             var rowCount = await _context.TodoItems.Where(x => x.Name.Contains(name)).CountAsync();
             return SetPageResult(results, (int)page, rowCount);
         }
@@ -56,6 +48,21 @@ namespace ExampleNetCore.Controllers
 
             result.Results = results;
             return result;
+        }
+
+
+        // GET: api/Todo/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
+        {
+            var todoItem = await _context.TodoItems.FindAsync(id);
+
+            if (todoItem == null)
+            {
+                return NotFound();
+            }
+
+            return todoItem;
         }
 
         // POST: api/Todo

@@ -51,8 +51,7 @@
     <p id="counter"></p>
 
     <form class="search" action="javascript:;" method="get">
-        <input type="text" name="search-name" value="" />
-        <input type="submit" value="Search" />
+        <input type="text" id="search-name" value="" placeholder="search" onkeyup="getData(1,$(this).val())" />
     </form>
     <br />
     <table>
@@ -71,74 +70,6 @@
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="site.js"></script>
-    <script>
-        var searchName;
-
-        $('.search').on('submit', function () {
-            name = $(this).find('input[name="search-name"]').val();
-            if (name == '') {
-                $(this).find('input[name="search-name"]').focus();
-                return false;
-            }
-            searchName = name;
-            search(searchName, 1)
-        })
-
-        function search(name, page) {
-            $.ajax({
-                type: "GET",
-                url: uri + "/search?name=" + name + "&page=" + page,
-                cache: false,
-                success: function (data) {
-                    var pageCount = data.pageCount;
-                    var btn = "";
-                    for (var i = 0; i < pageCount; i++) {
-                        btn = btn + "<input type='submit' class='loadPageSearch' value='" + (i + 1) + "'/>";
-                    }
-                    $('.pagination').html(btn);
-
-
-                    const tBody = $("#todos");
-                    $(tBody).empty();
-
-                    $.each(data.results, function (key, item) {
-                        const tr = $("<tr></tr>")
-                            .append(
-                                $("<td></td>").append(
-                                    $("<input/>", {
-                                        type: "checkbox",
-                                        disabled: true,
-                                        checked: item.isComplete
-                                    })
-                                )
-                            )
-                            .append($("<td></td>").text(item.name))
-                            .append(
-                                $("<td></td>").append(
-                                    $("<button>Edit</button>").on("click", function () {
-                                        editItem(item.id);
-                                    })
-                                )
-                            )
-                            .append(
-                                $("<td></td>").append(
-                                    $("<button>Delete</button>").on("click", function () {
-                                        deleteItem(item.id);
-                                    })
-                                )
-                            );
-
-                        tr.appendTo(tBody);
-                    });
-                    todos = data.results;
-                }
-            });
-        }
-
-
-        $('.pagination').on('click', '.loadPageSearch', function () {
-            search(searchName, $(this).val())
-        })
-    </script>
+    
 </body>
 </html>
