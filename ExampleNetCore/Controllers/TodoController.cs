@@ -34,26 +34,21 @@ namespace ExampleNetCore.Controllers
             return await _context.TodoItems.ToListAsync();
         }
 
-        ////GET: api/Todo/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
-        //{
-        //    var todoItem = await _context.TodoItems.FindAsync(id);
-
-        //    if (todoItem == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return todoItem;
-        //}
-
         [HttpGet("page")]
         public async Task<ActionResult<PagedResult<TodoItem>>> GetTodo(int? page = 1)
         {            
             var skip = (int)(page - 1) * 2;
             var results = await _context.TodoItems.Skip(skip).Take(2).ToListAsync();
             var rowCount = _context.TodoItems.Count();
+            return SetPageResult(results, (int)page, rowCount);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItem(string name, int? page = 1)
+        {
+            var skip = (int)(page - 1) * 2;
+            var results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
+            var rowCount = results.Count();
             return SetPageResult(results, (int)page, rowCount);
         }
 
@@ -71,29 +66,21 @@ namespace ExampleNetCore.Controllers
             return result;
         }
 
-        [HttpGet("search")]
-        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItem(string name, int? page = 1)
-        {
-            var skip = (int)(page - 1) * 2;
-            var results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
-            var rowCount = results.Count();
-            return SetPageResult(results, (int)page, rowCount);
-        }
-
         [HttpGet("/api/todo/numberItem")]
         public ActionResult<int> GetNumberItem()
         {
             return _context.TodoItems.Count();
         }
-        //// POST: api/Todo
-        //[HttpPost]
-        //public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem item)
-        //{
-        //    _context.TodoItems.Add(item);
-        //    await _context.SaveChangesAsync();
 
-        //    return CreatedAtAction(nameof(GetTodoItem), new { id = item.Id }, item);
-        //}
+        // POST: api/Todo
+        [HttpPost]
+        public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem item)
+        {
+            _context.TodoItems.Add(item);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTodoItem), new { id = item.Id }, item);
+        }
 
         // PUT: api/Todo/5
         [HttpPut("{id}")]

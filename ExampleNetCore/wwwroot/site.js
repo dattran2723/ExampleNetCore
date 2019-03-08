@@ -89,8 +89,7 @@ function addItem() {
             alert("Something went wrong!");
         },
         success: function (result) {
-            getData();
-            getNumberItem();
+            getData(1);
             $("#add-name").val("");
         }
     });
@@ -101,8 +100,7 @@ function deleteItem(id) {
         url: uri + "/" + id,
         type: "DELETE",
         success: function (result) {
-            getData();
-            getNumberItem();
+            getData(1);
         }
     });
 }
@@ -132,7 +130,7 @@ $(".my-form").on("submit", function () {
         contentType: "application/json",
         data: JSON.stringify(item),
         success: function (result) {
-            getData();
+            getData(1);
         }
     });
 
