@@ -23,7 +23,7 @@ namespace ExampleNetCore.ViewModels
         }
     }
 
-    public class PagedResult<T>:PageResultBase where T: class
+    public class PagedResult<T> : PageResultBase where T : class
     {
         public IList<T> Results { get; set; }
 

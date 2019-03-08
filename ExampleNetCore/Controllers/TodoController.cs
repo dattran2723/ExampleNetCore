@@ -27,15 +27,15 @@ namespace ExampleNetCore.Controllers
             }
         }
 
-        // GET: api/Todo
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
-        {
-            return await _context.TodoItems.ToListAsync();
-        }
+        //// GET: api/Todo
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
+        //{
+        //    return await _context.TodoItems.ToListAsync();
+        //}
 
-        [HttpGet("page")]
-        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodo(int? page = 1)
+        [HttpGet("getAll")]
+        public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItems(int? page = 1)
         {            
             var skip = (int)(page - 1) * 2;
             var results = await _context.TodoItems.Skip(skip).Take(2).ToListAsync();

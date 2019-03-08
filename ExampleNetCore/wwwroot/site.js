@@ -26,7 +26,7 @@ $('.pagination').on('click', '.loadPage', function () {
 function getData(page) {
     $.ajax({
         type: "GET",
-        url: uri + "/page?page=" + page,
+        url: uri + "/getAll?page=" + page,
         cache: false,
         success: function (data) {
             var pageCount = data.pageCount;
@@ -71,6 +71,7 @@ function getData(page) {
 
                 tr.appendTo(tBody);
             });
+            todos = data.results;
         }
     });
 }
