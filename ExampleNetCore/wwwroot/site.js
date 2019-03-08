@@ -1,5 +1,6 @@
 ﻿const uri = "api/todo";
 let todos = null;
+var currentPage = 1;
 function getCount(data) {
     const el = $("#counter");
     let name = "to-do";
@@ -14,11 +15,12 @@ function getCount(data) {
 }
 
 $(document).ready(function () {
-    getData(1);
+    getData(currentPage);
 });
 
-$('.pagination').on('click', '.loadPage', function () {    
-    getData($(this).val());
+$('.pagination').on('click', '.loadPage', function () {
+    currentPage = $(this).val();
+    getData(currentPage);
 })
 
 function getData(page) {
@@ -89,7 +91,7 @@ function addItem() {
             alert("Something went wrong!");
         },
         success: function (result) {
-            getData(1);
+            getData(currentPage);
             $("#add-name").val("");
         }
     });
@@ -100,7 +102,7 @@ function deleteItem(id) {
         url: uri + "/" + id,
         type: "DELETE",
         success: function (result) {
-            getData(1);
+            getData(currentPage);
         }
     });
 }
@@ -130,7 +132,7 @@ $(".my-form").on("submit", function () {
         contentType: "application/json",
         data: JSON.stringify(item),
         success: function (result) {
-            getData(1);
+            getData(currentPage);
         }
     });
 

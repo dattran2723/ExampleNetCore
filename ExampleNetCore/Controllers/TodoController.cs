@@ -48,7 +48,7 @@ namespace ExampleNetCore.Controllers
         {
             var skip = (int)(page - 1) * 2;
             var results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
-            var rowCount = results.Count();
+            var rowCount = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).CountAsync();
             return SetPageResult(results, (int)page, rowCount);
         }
 

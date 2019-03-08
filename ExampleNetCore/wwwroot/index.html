@@ -72,15 +72,16 @@
             crossorigin="anonymous"></script>
     <script src="site.js"></script>
     <script>
-        const link = "/api/todo";
+        var searchName;
 
         $('.search').on('submit', function () {
-            var name = $(this).find('input[name="search-name"]').val();
+            name = $(this).find('input[name="search-name"]').val();
             if (name == '') {
                 $(this).find('input[name="search-name"]').focus();
                 return false;
             }
-            search(name,1)
+            searchName = name;
+            search(searchName, 1)
         })
 
         function search(name, page) {
@@ -133,6 +134,10 @@
             });
         }
 
+
+        $('.pagination').on('click', '.loadPageSearch', function () {
+            search(searchName, $(this).val())
+        })
     </script>
 </body>
 </html>
