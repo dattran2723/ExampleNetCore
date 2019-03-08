@@ -1,12 +1,11 @@
-﻿using System;
+﻿using ExampleNetCore.Models;
+using ExampleNetCore.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ExampleNetCore.Models;
-using ExampleNetCore.ViewModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExampleNetCore.Controllers
 {
@@ -40,8 +39,8 @@ namespace ExampleNetCore.Controllers
         public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItem(string name, int? page = 1)
         {
             var skip = (int)(page - 1) * 2;
-            var results = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).Skip(skip).Take(2).ToListAsync();
-            var rowCount = await _context.TodoItems.Where(x => x.Name.ToLower().Contains(name.ToLower())).CountAsync();
+            var results = await _context.TodoItems.Where(x => x.Name.Contains(name)).Skip(skip).Take(2).ToListAsync();
+            var rowCount = await _context.TodoItems.Where(x => x.Name.Contains(name)).CountAsync();
             return SetPageResult(results, (int)page, rowCount);
         }
 
