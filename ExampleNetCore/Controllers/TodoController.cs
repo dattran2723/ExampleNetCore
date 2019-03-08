@@ -26,14 +26,7 @@ namespace ExampleNetCore.Controllers
                 _context.SaveChanges();
             }
         }
-
-        //// GET: api/Todo
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
-        //{
-        //    return await _context.TodoItems.ToListAsync();
-        //}
-
+        
         [HttpGet("getAll")]
         public async Task<ActionResult<PagedResult<TodoItem>>> GetTodoItems(int? page = 1)
         {            
@@ -64,12 +57,6 @@ namespace ExampleNetCore.Controllers
 
             result.Results = results;
             return result;
-        }
-
-        [HttpGet("/api/todo/numberItem")]
-        public ActionResult<int> GetNumberItem()
-        {
-            return _context.TodoItems.Count();
         }
 
         // POST: api/Todo
