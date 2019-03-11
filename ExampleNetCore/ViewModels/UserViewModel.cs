@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace ExampleNetCore.ViewModels
 {
-    public class TodoViewModel
+    public class UserViewModel
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public bool IsComplete { get; set; }
-        public UserViewModel UserAssign { get; set; }
+        public string Email { get; set; }
+        public long DateOfBirth { get; set; }
+        public Gender Gender { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
     }
 }

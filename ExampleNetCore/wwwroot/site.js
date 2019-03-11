@@ -53,18 +53,18 @@ function getData(page, name) {
                             })
                         )
                     )
-                    .append($("<td></td>").text(item.todoItem.name))
+                    .append($("<td></td>").text(item.name))
                     .append(
                         $("<td></td>").append(
                             $("<button>Edit</button>").on("click", function () {
-                            editItem(item.todoItem.id);
+                            editItem(item.id);
                             })
                         )
                     )
                     .append(
                         $("<td></td>").append(
                             $("<button>Delete</button>").on("click", function () {
-                            deleteItem(item.todoItem.id);
+                            deleteItem(item.id);
                             })
                         )
                     );
@@ -110,10 +110,10 @@ function deleteItem(id) {
 
 function editItem(id) {
     $.each(todos, function (key, item) {
-        if (item.todoItem.id === id) {
-            $("#edit-name").val(item.todoItem.name);
-            $("#edit-id").val(item.todoItem.id);
-            $("#edit-isComplete")[0].checked = item.todoItem.isComplete;
+        if (item.id === id) {
+            $("#edit-name").val(item.name);
+            $("#edit-id").val(item.id);
+            $("#edit-isComplete")[0].checked = item.isComplete;
         }
     });
     $("#spoiler").css({ display: "block" });

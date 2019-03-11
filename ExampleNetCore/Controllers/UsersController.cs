@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExampleNetCore.Models;
+using ExampleNetCore.ViewModels;
 
 namespace ExampleNetCore.Controllers
 {
@@ -22,14 +23,20 @@ namespace ExampleNetCore.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<List<UserViewModel>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            List<UserViewModel> list = new List<UserViewModel>();
+            var users = await _context.Users.ToListAsync();
+            foreach (var item in users)
+            {
+                list.Add(MapperUserToUserViewModel(item));
+            }
+            return list;
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(long id)
+        public async Task<ActionResult<UserViewModel>> GetUser(long id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -38,20 +45,21 @@ namespace ExampleNetCore.Controllers
                 return NotFound();
             }
 
-            return user;
+            return MapperUserToUserViewModel(user);
         }
+        
 
         // POST: api/Users
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<User>> Create(User user)
+        public async Task<ActionResult<UserViewModel>> Create(User user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(user);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return MapperUserToUserViewModel(user);
         }
 
         // PUT: api/Users/5
@@ -63,30 +71,19 @@ namespace ExampleNetCore.Controllers
                 return BadRequest();
             }
 
+            if (!UserExists(id))
+                return NotFound();
+
             _context.Entry(user).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete(long id)
+        public async Task<ActionResult<UserViewModel>> Delete(long id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -97,12 +94,26 @@ namespace ExampleNetCore.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return MapperUserToUserViewModel(user);
         }
 
         private bool UserExists(long id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+        private UserViewModel MapperUserToUserViewModel(User user)
+        {
+            var dateTimeOffset = new DateTimeOffset(user.DateOfBirth);
+            return new UserViewModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                DateOfBirth = dateTimeOffset.ToUnixTimeSeconds(),
+                Gender = user.Gerder,
+                Phone = user.Phone,
+                Address = user.Address
+            };
         }
     }
 }

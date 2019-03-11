@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ExampleNetCore.Models
 {
+    public enum Gender { Female, Male }
     public class User
     {
         [Key]
@@ -24,7 +25,7 @@ namespace ExampleNetCore.Models
         [StringLength(13, ErrorMessage = "Số điên thoại gồm 6-13 ký tự số!", MinimumLength = 6)]
         public string Phone { get; set; }
 
-        public bool Gerder { get; set; }
+        public Gender Gerder { get; set; }
 
         public string Address { get; set; }
     }

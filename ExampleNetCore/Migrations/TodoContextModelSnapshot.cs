@@ -49,7 +49,7 @@ namespace ExampleNetCore.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
-                    b.Property<bool>("Gerder");
+                    b.Property<int>("Gerder");
 
                     b.Property<string>("Name");
 

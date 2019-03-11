@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExampleNetCore.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20190311071719_init-db")]
+    [Migration("20190311102646_init-db")]
     partial class initdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace ExampleNetCore.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
-                    b.Property<bool>("Gerder");
+                    b.Property<int>("Gerder");
 
                     b.Property<string>("Name");
 

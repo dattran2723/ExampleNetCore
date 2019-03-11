@@ -37,7 +37,13 @@ namespace ExampleNetCore.Controllers
             List<TodoViewModel> list = new List<TodoViewModel>();
             foreach (var item in results)
             {
-                list.Add(new TodoViewModel { TodoItem = item, UserAssign = await GetUserById(item.UserIdAssign) });
+                list.Add(new TodoViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    IsComplete = item.IsComplete,
+                    UserAssign = MapperUserToUserViewModel(await GetUserById(item.UserIdAssign))
+                });
             }
 
             return SetPageResult(list, (int)page, rowCount);
@@ -72,7 +78,13 @@ namespace ExampleNetCore.Controllers
             if (user == null)
                 return NotFound();
 
-            return new TodoViewModel { TodoItem = todoItem, UserAssign = user};
+            return new TodoViewModel
+            {
+                Id = todoItem.Id,
+                Name = todoItem.Name,
+                IsComplete = todoItem.IsComplete,
+                UserAssign = MapperUserToUserViewModel(user)
+            };
         }
 
         // POST: api/Todo
@@ -86,7 +98,13 @@ namespace ExampleNetCore.Controllers
             _context.TodoItems.Add(item);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTodoItem), new { id = item.Id }, item);
+            return new TodoViewModel
+            {
+                Id = item.Id,
+                Name = item.Name,
+                IsComplete = item.IsComplete,
+                UserAssign = MapperUserToUserViewModel(user)
+            };
         }
 
         // PUT: api/Todo/5
@@ -127,6 +145,21 @@ namespace ExampleNetCore.Controllers
         public async Task<User> GetUserById(long id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        private UserViewModel MapperUserToUserViewModel(User user)
+        {
+            var dateTimeOffset = new DateTimeOffset(user.DateOfBirth);
+            return new UserViewModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                DateOfBirth = dateTimeOffset.ToUnixTimeSeconds(),
+                Gender = user.Gerder,
+                Phone = user.Phone,
+                Address = user.Address
+            };
         }
     }
 }

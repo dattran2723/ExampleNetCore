@@ -33,7 +33,7 @@ namespace ExampleNetCore.Migrations
                     Email = table.Column<string>(nullable: false),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
                     Phone = table.Column<string>(maxLength: 13, nullable: false),
-                    Gerder = table.Column<bool>(nullable: false),
+                    Gerder = table.Column<int>(nullable: false),
                     Address = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
