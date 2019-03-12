@@ -116,7 +116,7 @@ namespace ExampleNetCore.Controllers
                 return BadRequest();
             }
 
-            if (GetUserById(item.UserIdAssign) == null)
+            if (!_context.TodoItems.Any(x=> x.Id == item.Id) || GetUserById(item.UserIdAssign) == null)
                 return NotFound();
 
             _context.Entry(item).State = EntityState.Modified;

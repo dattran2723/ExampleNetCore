@@ -29,7 +29,7 @@ namespace ExampleNetCore.Controllers
             var users = await _context.Users.ToListAsync();
             foreach (var item in users)
             {
-                list.Add(MapperUserToUserViewModel(item));
+                list.Add(MapperToUserViewModel(item));
             }
             return list;
         }
@@ -45,26 +45,26 @@ namespace ExampleNetCore.Controllers
                 return NotFound();
             }
 
-            return MapperUserToUserViewModel(user);
+            return MapperToUserViewModel(user);
         }
-        
+
 
         // POST: api/Users
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<UserViewModel>> Create(User user)
+        public async Task<ActionResult<UserViewModel>> Create(UserViewModel user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(user);
-            _context.Users.Add(user);
+            _context.Users.Add(MapperToUser(user));
             await _context.SaveChangesAsync();
 
-            return MapperUserToUserViewModel(user);
+            return MapperToUserViewModel(MapperToUser(user));
         }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(long id, User user)
+        public async Task<IActionResult> Edit(long id, UserViewModel user)
         {
             if (id != user.Id || !ModelState.IsValid)
             {
@@ -74,7 +74,7 @@ namespace ExampleNetCore.Controllers
             if (!UserExists(id))
                 return NotFound();
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Entry(MapperToUser(user)).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
 
@@ -94,23 +94,39 @@ namespace ExampleNetCore.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return MapperUserToUserViewModel(user);
+            return MapperToUserViewModel(user);
         }
 
         private bool UserExists(long id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
-        private UserViewModel MapperUserToUserViewModel(User user)
+
+        private UserViewModel MapperToUserViewModel(User user)
         {
-            var dateTimeOffset = new DateTimeOffset(user.DateOfBirth);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return new UserViewModel
             {
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                DateOfBirth = dateTimeOffset.ToUnixTimeSeconds(),
+                DateOfBirth = Convert.ToInt64((user.DateOfBirth - epoch).TotalSeconds),
                 Gender = user.Gerder,
+                Phone = user.Phone,
+                Address = user.Address
+            };
+        }
+
+        private User MapperToUser(UserViewModel user)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return new User
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                DateOfBirth = epoch.AddSeconds(user.DateOfBirth),
+                Gerder = user.Gender,
                 Phone = user.Phone,
                 Address = user.Address
             };
