@@ -30,7 +30,9 @@ namespace ExampleNetCore.Controllers
             var users = await _context.Users.ToListAsync();
             foreach (var item in users)
             {
-                list.Add(MapperToUserViewModel(item));
+                UserViewModel userView = MapperToUserViewModel(item);
+                userView.ListTodo = await GetTodosByUserId(item.Id);
+                list.Add(userView);
             }
             return list;
         }
@@ -45,8 +47,10 @@ namespace ExampleNetCore.Controllers
             {
                 return NotFound();
             }
+            UserViewModel userView = MapperToUserViewModel(user);
+            userView.ListTodo = await GetTodosByUserId(user.Id);
 
-            return MapperToUserViewModel(user);
+            return userView;
         }
 
 
@@ -133,6 +137,11 @@ namespace ExampleNetCore.Controllers
                 Phone = user.Phone,
                 Address = user.Address
             };
+        }
+
+        public async Task<List<TodoItem>> GetTodosByUserId(long id)
+        {
+            return await _context.TodoItems.Where(x => x.UserIdAssign == id).ToListAsync();
         }
     }
 }

@@ -25,5 +25,7 @@ namespace ExampleNetCore.ViewModels
         [StringLength(13, ErrorMessage = "Số điên thoại gồm 6-13 ký tự số!", MinimumLength = 6)]
         public string Phone { get; set; }
         public string Address { get; set; }
+
+        public List<TodoItem> ListTodo { get; set; }
     }
 }
