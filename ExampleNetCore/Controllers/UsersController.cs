@@ -148,8 +148,7 @@ namespace ExampleNetCore.Controllers
         [Route("checkexistingemail")]
         public async Task<ActionResult> CheckExistingEmail(string email)
         {
-            var result = await _context.Users.AnyAsync(x => x.Email == email);
-            if (result)
+            if (await _context.Users.AnyAsync(x => x.Email == email))
                 return Ok();
             return NotFound();
         }
@@ -158,8 +157,7 @@ namespace ExampleNetCore.Controllers
         [Route("checkexistingphone")]
         public async Task<ActionResult> CheckExistingPhone(string phone)
         {
-            var result = await _context.Users.AnyAsync(x => x.Phone == phone);
-            if (result)
+            if (await _context.Users.AnyAsync(x => x.Phone == phone))
                 return Ok();
             return NotFound();
         }
