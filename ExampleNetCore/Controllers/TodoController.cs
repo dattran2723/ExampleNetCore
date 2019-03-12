@@ -27,17 +27,17 @@ namespace ExampleNetCore.Controllers
         }
         
         [HttpGet("get")]
-        public async Task<ActionResult<PagedResult<TodoViewModel>>> GetTodoItems(string name, int? page = 1)
+        public async Task<ActionResult<PagedResult<TodoDetailViewModel>>> GetTodoItems(string name, int? page = 1)
         {
             name = name != null ? name : "";
             var skip = (int)(page - 1) * 2;
             var results = await _context.TodoItems.Where(x=>x.Name.Contains(name)).Skip(skip).Take(2).ToListAsync();
             var rowCount = await _context.TodoItems.Where(x => x.Name.Contains(name)).CountAsync();
 
-            List<TodoViewModel> list = new List<TodoViewModel>();
+            List<TodoDetailViewModel> list = new List<TodoDetailViewModel>();
             foreach (var item in results)
             {
-                list.Add(new TodoViewModel
+                list.Add(new TodoDetailViewModel
                 {
                     Id = item.Id,
                     Name = item.Name,
@@ -49,9 +49,9 @@ namespace ExampleNetCore.Controllers
             return SetPageResult(list, (int)page, rowCount);
         }
 
-        public PagedResult<TodoViewModel> SetPageResult(List<TodoViewModel> results, int page, int rowCount)
+        public PagedResult<TodoDetailViewModel> SetPageResult(List<TodoDetailViewModel> results, int page, int rowCount)
         {
-            var result = new PagedResult<TodoViewModel>();
+            var result = new PagedResult<TodoDetailViewModel>();
             result.CurrentPage = (int)page;
             result.PageSize = 2;
             result.RowCount = rowCount;
@@ -66,7 +66,7 @@ namespace ExampleNetCore.Controllers
 
         // GET: api/Todo/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TodoViewModel>> GetTodoItem(long id)
+        public async Task<ActionResult<TodoDetailViewModel>> GetTodoItem(long id)
         {
             var todoItem = await _context.TodoItems.FindAsync(id);
 
@@ -78,7 +78,7 @@ namespace ExampleNetCore.Controllers
             if (user == null)
                 return NotFound();
 
-            return new TodoViewModel
+            return new TodoDetailViewModel
             {
                 Id = todoItem.Id,
                 Name = todoItem.Name,
@@ -89,7 +89,7 @@ namespace ExampleNetCore.Controllers
 
         // POST: api/Todo
         [HttpPost]
-        public async Task<ActionResult<TodoViewModel>> PostTodoItem(TodoItem item)
+        public async Task<ActionResult<TodoDetailViewModel>> PostTodoItem(TodoItem item)
         {
             var user = await GetUserById(item.UserIdAssign);
             if (user == null)
@@ -98,7 +98,7 @@ namespace ExampleNetCore.Controllers
             _context.TodoItems.Add(item);
             await _context.SaveChangesAsync();
 
-            return new TodoViewModel
+            return new TodoDetailViewModel
             {
                 Id = item.Id,
                 Name = item.Name,

@@ -29,14 +29,21 @@ namespace ExampleNetCore.Controllers
         public async Task<ActionResult<List<UserViewModel>>> GetUsers()
         {
             var user = await _context.Users
-                        .Select(x=> new UserViewModel {
+                        .Select(x => new UserViewModel
+                        {
                             Id = x.Id,
                             Name = x.Name,
                             Email = x.Email,
                             DateOfBirth = Convert.ToInt64((x.DateOfBirth - epoch).TotalSeconds),
                             Phone = x.Phone,
                             Address = x.Address,
-                            ListTodo = _context.TodoItems.Where(t=>t.UserIdAssign==x.Id).ToList(),
+                            ListTodo = _context.TodoItems.Where(t => t.UserIdAssign == x.Id)
+                                        .Select(t => new TodoViewModel
+                                        {
+                                            Id = t.Id,
+                                            Name = t.Name,
+                                            IsComplete = t.IsComplete
+                                        }).ToList(),
                         }).ToListAsync();
 
             return user;
@@ -46,7 +53,7 @@ namespace ExampleNetCore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserViewModel>> GetUser(long id)
         {
-            var user = await _context.Users.Where(x=>x.Id == id)
+            var user = await _context.Users.Where(x => x.Id == id)
                         .Select(x => new UserViewModel
                         {
                             Id = x.Id,
@@ -55,7 +62,13 @@ namespace ExampleNetCore.Controllers
                             DateOfBirth = Convert.ToInt64((x.DateOfBirth - epoch).TotalSeconds),
                             Phone = x.Phone,
                             Address = x.Address,
-                            ListTodo = _context.TodoItems.Where(t => t.UserIdAssign == x.Id).ToList(),
+                            ListTodo = _context.TodoItems.Where(t => t.UserIdAssign == x.Id)
+                                        .Select(t => new TodoViewModel
+                                        {
+                                            Id = t.Id,
+                                            Name = t.Name,
+                                            IsComplete = t.IsComplete
+                                        }).ToList(),
                         }).FirstOrDefaultAsync();
 
             if (user == null)

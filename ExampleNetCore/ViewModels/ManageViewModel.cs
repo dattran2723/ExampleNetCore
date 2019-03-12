@@ -1,5 +1,4 @@
 ﻿using ExampleNetCore.Models;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,13 +7,27 @@ using System.Threading.Tasks;
 
 namespace ExampleNetCore.ViewModels
 {
+    public class TodoDetailViewModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsComplete { get; set; }
+        public UserViewModel UserAssign { get; set; }
+    }
+
+    public class TodoViewModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsComplete { get; set; }
+    }
+
     public class UserViewModel
     {
-        [Key]
         public long Id { get; set; }
         public string Name { get; set; }
 
-        [Display(Name="Email")]
+        [Display(Name = "Email")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ!")]
         [CheckEmail]
         public string Email { get; set; }
@@ -33,6 +46,6 @@ namespace ExampleNetCore.ViewModels
         public string Phone { get; set; }
         public string Address { get; set; }
 
-        public List<TodoItem> ListTodo { get; set; }
+        public List<TodoViewModel> ListTodo { get; set; }
     }
 }
