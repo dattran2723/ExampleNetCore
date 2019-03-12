@@ -143,5 +143,25 @@ namespace ExampleNetCore.Controllers
         {
             return await _context.TodoItems.Where(x => x.UserIdAssign == id).ToListAsync();
         }
+
+        [HttpGet]
+        [Route("checkexistingemail")]
+        public async Task<ActionResult> CheckExistingEmail(string email)
+        {
+            var result = await _context.Users.AnyAsync(x => x.Email == email);
+            if (result)
+                return Ok();
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("checkexistingphone")]
+        public async Task<ActionResult> CheckExistingPhone(string phone)
+        {
+            var result = await _context.Users.AnyAsync(x => x.Phone == phone);
+            if (result)
+                return Ok();
+            return NotFound();
+        }
     }
 }

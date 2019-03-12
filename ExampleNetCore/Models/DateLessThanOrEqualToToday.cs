@@ -29,4 +29,47 @@ namespace ExampleNetCore.Models
         }
     }
 
+    public class CheckEmail : ValidationAttribute
+    {
+        public override string FormatErrorMessage(string name)
+        {
+            return "Email đã tồn tại";
+        }
+        protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:44395/api/");
+            //HTTP GET
+            var responseTask = client.GetAsync("users/checkexistingemail?email=" + objValue.ToString());
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
+            }
+            return ValidationResult.Success;
+        }
+    }
+
+    public class CheckPhone : ValidationAttribute
+    {
+        public override string FormatErrorMessage(string name)
+        {
+            return "Số điện thoại đã tồn tại";
+        }
+        protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:44395/api/");
+            //HTTP GET
+            var responseTask = client.GetAsync("users/checkexistingphone?phone=" + objValue.ToString());
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
+            }
+            return ValidationResult.Success;
+        }
+    }
 }

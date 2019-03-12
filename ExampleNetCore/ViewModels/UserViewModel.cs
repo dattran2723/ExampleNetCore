@@ -15,6 +15,7 @@ namespace ExampleNetCore.ViewModels
         public string Name { get; set; }
 
         [EmailAddress(ErrorMessage = "Email không hợp lệ!")]
+        [CheckEmail]
         public string Email { get; set; }
 
         [DateLessThanOrEqualToToday]
@@ -23,6 +24,7 @@ namespace ExampleNetCore.ViewModels
 
         [RegularExpression("^0[0-9]+$", ErrorMessage = "Vui lòng nhập đúng định dạng!")]
         [StringLength(13, ErrorMessage = "Số điên thoại gồm 6-13 ký tự số!", MinimumLength = 6)]
+        [CheckPhone]
         public string Phone { get; set; }
         public string Address { get; set; }
 
