@@ -16,6 +16,8 @@ namespace ExampleNetCore.Controllers
     {
         private readonly TodoContext _context;
 
+        private DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         public UsersController(TodoContext context)
         {
             _context = context;
@@ -26,31 +28,42 @@ namespace ExampleNetCore.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserViewModel>>> GetUsers()
         {
-            List<UserViewModel> list = new List<UserViewModel>();
-            var users = await _context.Users.ToListAsync();
-            foreach (var item in users)
-            {
-                UserViewModel userView = MapperToUserViewModel(item);
-                userView.ListTodo = await GetTodosByUserId(item.Id);
-                list.Add(userView);
-            }
-            return list;
+            var user = await _context.Users
+                        .Select(x=> new UserViewModel {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Email = x.Email,
+                            DateOfBirth = Convert.ToInt64((x.DateOfBirth - epoch).TotalSeconds),
+                            Phone = x.Phone,
+                            Address = x.Address,
+                            ListTodo = _context.TodoItems.Where(t=>t.UserIdAssign==x.Id).ToList(),
+                        }).ToListAsync();
+
+            return user;
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserViewModel>> GetUser(long id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Where(x=>x.Id == id)
+                        .Select(x => new UserViewModel
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Email = x.Email,
+                            DateOfBirth = Convert.ToInt64((x.DateOfBirth - epoch).TotalSeconds),
+                            Phone = x.Phone,
+                            Address = x.Address,
+                            ListTodo = _context.TodoItems.Where(t => t.UserIdAssign == x.Id).ToList(),
+                        }).FirstOrDefaultAsync();
 
             if (user == null)
             {
                 return NotFound();
             }
-            UserViewModel userView = MapperToUserViewModel(user);
-            userView.ListTodo = await GetTodosByUserId(user.Id);
 
-            return userView;
+            return user;
         }
 
 
@@ -111,7 +124,6 @@ namespace ExampleNetCore.Controllers
 
         private UserViewModel MapperToUserViewModel(User user)
         {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return new UserViewModel
             {
                 Id = user.Id,
@@ -126,7 +138,6 @@ namespace ExampleNetCore.Controllers
 
         private User MapperToUser(UserViewModel user)
         {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return new User
             {
                 Id = user.Id,
@@ -141,7 +152,8 @@ namespace ExampleNetCore.Controllers
 
         public async Task<List<TodoItem>> GetTodosByUserId(long id)
         {
-            return await _context.TodoItems.Where(x => x.UserIdAssign == id).ToListAsync();
+            var listTodo = await _context.TodoItems.Where(x => x.UserIdAssign == id).ToListAsync();
+            return listTodo;
         }
 
         [HttpGet]
