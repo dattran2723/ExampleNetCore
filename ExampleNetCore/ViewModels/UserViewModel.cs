@@ -14,14 +14,19 @@ namespace ExampleNetCore.ViewModels
         public long Id { get; set; }
         public string Name { get; set; }
 
+        [Display(Name="Email")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ!")]
         [CheckEmail]
         public string Email { get; set; }
 
+
+        [Display(Name = "Ngày sinh")]
         [DateLessThanOrEqualToToday]
         public long DateOfBirth { get; set; }
         public Gender Gender { get; set; }
 
+
+        [Display(Name = "Số điện thoại")]
         [RegularExpression("^0[0-9]+$", ErrorMessage = "Vui lòng nhập đúng định dạng!")]
         [StringLength(13, ErrorMessage = "Số điên thoại gồm 6-13 ký tự số!", MinimumLength = 6)]
         [CheckPhone]

@@ -13,7 +13,7 @@ namespace ExampleNetCore.Models
     {
         public override string FormatErrorMessage(string name)
         {
-            return "Ngày sinh phải nhỏ hơn ngày hiện tại";
+            return name + " phải nhỏ hơn ngày hiện tại";
         }
         protected override ValidationResult IsValid(object objValue,
                                                    ValidationContext validationContext)
@@ -33,7 +33,7 @@ namespace ExampleNetCore.Models
     {
         public override string FormatErrorMessage(string name)
         {
-            return "Email đã tồn tại";
+            return name + " đã tồn tại";
         }
         protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
         {
@@ -55,7 +55,7 @@ namespace ExampleNetCore.Models
     {
         public override string FormatErrorMessage(string name)
         {
-            return "Số điện thoại đã tồn tại";
+            return name + " đã tồn tại";
         }
         protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
         {
