@@ -20,6 +20,7 @@ namespace ExampleNetCore.Controllers
         {
             _context = context;
         }
+        //public UsersController() { }
 
         // GET: api/Users
         [HttpGet]
@@ -56,7 +57,9 @@ namespace ExampleNetCore.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(user);
-            _context.Users.Add(MapperToUser(user));
+
+
+            var result = _context.Users.Add(MapperToUser(user));
             await _context.SaveChangesAsync();
 
             return MapperToUserViewModel(MapperToUser(user));

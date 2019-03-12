@@ -1,7 +1,10 @@
-﻿using System;
+﻿using ExampleNetCore.Controllers;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ExampleNetCore.Models
@@ -15,8 +18,9 @@ namespace ExampleNetCore.Models
         protected override ValidationResult IsValid(object objValue,
                                                    ValidationContext validationContext)
         {
-            var dateValue = objValue as DateTime? ?? new DateTime();
-            
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var dateValue = epoch.AddSeconds((long)objValue);
+
             if (dateValue.Date > DateTime.Now.Date)
             {
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
@@ -24,4 +28,5 @@ namespace ExampleNetCore.Models
             return ValidationResult.Success;
         }
     }
+
 }
