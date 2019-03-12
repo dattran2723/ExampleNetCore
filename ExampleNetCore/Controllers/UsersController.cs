@@ -62,7 +62,7 @@ namespace ExampleNetCore.Controllers
             var result = _context.Users.Add(MapperToUser(user));
             await _context.SaveChangesAsync();
 
-            return MapperToUserViewModel(MapperToUser(user));
+            return user;
         }
 
         // PUT: api/Users/5
